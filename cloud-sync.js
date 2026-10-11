@@ -289,6 +289,7 @@
       if (data && data.access_token) {
         rememberToken(data);
         await getUser();
+        await app.initPromise;
         await inspectRemote();
       } else {
         status('確認メールを送信しました。メールのリンクで認証後、戻ってログインしてください。', 'success');
@@ -327,6 +328,7 @@
       updateUI();
       if (session) {
         await getUser();
+        await app.initPromise;
         await inspectRemote();
       } else {
         status('☁ 未ログイン・端末内に保存中');
