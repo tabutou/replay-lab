@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0a101c">
+  <title>Replay Lab | XAUUSD 分析トレーニング</title>
+  <style>
+:root{color-scheme:dark;--bg:#080e19;--panel:#111b2c;--panel2:#0c1523;--edge:#253248;--text:#e8eef9;--muted:#8493ad;--blue:#648fff;--blue2:#4266d4;--green:#1bcda5;--red:#f26d77;--gold:#eeb86b;--radius:14px;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% -20%,#132039 0%,#080e19 50%);color:var(--text);font-size:14px}button,textarea,input,select{font:inherit}button{cursor:pointer;color:inherit}button:disabled{opacity:.4;cursor:default}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--blue);outline-offset:2px}.app-shell{max-width:1630px;margin:0 auto;padding:0 22px}.topbar{height:82px;border-bottom:1px solid var(--edge);display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:flex;gap:13px;align-items:center}.brand strong{font-size:18px;letter-spacing:2px}.brand em{font-style:normal;color:#76a7ff}.brand small{display:block;margin-top:4px;color:var(--muted);font-size:11px;letter-spacing:1px}.logo{width:39px;height:39px;display:flex;align-items:center;justify-content:center;gap:3px;background:#192d4e;border:1px solid #365484;border-radius:12px}.logo span{display:block;width:4px;border-radius:2px;background:var(--blue)}.logo span:nth-child(1){height:11px}.logo span:nth-child(2){height:21px;background:var(--green)}.logo span:nth-child(3){height:16px}.logo span:nth-child(4){height:28px;background:var(--green)}.top-actions{display:flex;gap:10px;align-items:center}.data-pill{color:var(--gold);background:#372b1b;border:1px solid #5b442b;padding:8px 12px;font-size:12px;border-radius:20px;white-space:nowrap}.btn{border:1px solid transparent;border-radius:9px;padding:10px 14px;font-weight:650;background:#22304a;white-space:nowrap;transition:background .15s}.btn:hover{filter:brightness(1.12)}.btn-accent{background:linear-gradient(130deg,#638eff,#4269db);color:white;box-shadow:0 4px 18px #406de326}.btn-outline{border:1px solid #33445e;background:transparent}.btn.subtle{background:#202d44;color:#dce6fa}.ico{font-size:17px}.workspace{display:grid;grid-template-columns:minmax(0,1fr) 314px;gap:18px;margin-top:20px}.main-column,.sidebar{min-width:0}.main-column{display:flex;flex-direction:column;gap:15px}.sidebar{display:flex;flex-direction:column;gap:14px}.status-strip{display:grid;grid-template-columns:1fr 1.6fr 1fr;gap:10px}.status-card{background:#121d30;border:1px solid var(--edge);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:7px}.status-card span{color:var(--muted);font-size:11px}.status-card strong{font-size:15px;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.status-card i{font-weight:400;font-style:normal;color:var(--muted);font-size:11px}.chart-card,.playback-card,.context-card,.side-card{background:var(--panel);border:1px solid var(--edge);border-radius:var(--radius);box-shadow:0 14px 30px #00000018;overflow:hidden}.chart-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;border-bottom:1px solid var(--edge);flex-wrap:wrap}.chart-head-left{display:flex;gap:9px;align-items:center}.chart-head-left strong{font-size:13px}.chart-head-left .muted{font-size:12px;color:var(--muted)}.live-dot{height:8px;width:8px;background:var(--green);border-radius:50%;box-shadow:0 0 7px #1bcda587}.timeframes,.context-frames{display:flex;gap:3px;background:#0b1524;border:1px solid #28354b;border-radius:9px;padding:4px;max-width:100%;overflow-x:auto}.timeframes button,.context-frames button{border:0;background:transparent;border-radius:6px;color:#a8b5cd;padding:8px 11px;font-size:12px;font-weight:700}.timeframes button.active,.context-frames button.active{background:#334b77;color:white}.drawing-tools{display:flex;gap:10px;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid #1e2b3f}.tool-group{display:flex;gap:4px;white-space:nowrap}.tool{padding:8px 10px;border:1px solid transparent;background:transparent;color:#becbe0;border-radius:7px;font-size:15px}.tool span{font-size:11px;margin-left:3px}.tool:hover{background:#27384f}.tool.active{background:#27456c;border-color:#4675a6;color:#dcecff}.tool-hint{color:var(--muted);font-size:10px;text-align:right}.chart-wrap{position:relative;background:#0b1422;height:430px;touch-action:pan-y;overflow:hidden}.chart-wrap canvas,.context-chart canvas{display:block;width:100%;height:100%;touch-action:none;cursor:crosshair}.chart-watermark{pointer-events:none;position:absolute;top:12px;left:18px;color:#efbd744f;letter-spacing:2px;font-weight:800;font-size:11px}.chart-bottom{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;gap:10px;border-top:1px solid #203044;flex-wrap:wrap}#ohlcLabel{color:#a6b6d0;font-size:11px;font-variant-numeric:tabular-nums}.chart-nav{display:flex;align-items:center;gap:8px}.chart-nav button{border:1px solid #2c405d;background:#142238;border-radius:6px;padding:6px 9px;font-size:11px}.chart-nav label{color:var(--muted);display:flex;align-items:center;gap:5px;font-size:11px}.chart-nav input{width:87px;accent-color:var(--blue)}.playback-card{padding:15px 16px}.playback-title,.context-head,.side-heading{display:flex;justify-content:space-between;align-items:center;gap:10px}.playback-title strong{display:block;font-size:12px;letter-spacing:1px}.playback-title span{display:block;color:var(--muted);font-size:10px;margin-top:4px}.playback-title .btn{font-size:12px;padding:8px 10px}.playback-buttons{display:flex;gap:9px;margin:15px 0;align-items:stretch}.playback-buttons button{border:1px solid #334763;border-radius:10px;background:#1b2b43;font-size:13px;font-weight:700;min-height:44px}.playback-buttons button:hover{background:#294164}.square-btn{min-width:52px}.playback-buttons .play-btn{min-width:120px;background:#476fe4;border-color:#688aff}.playback-buttons .wide-btn{margin-left:auto;padding:0 15px;background:#263c5e}.progress-track{height:5px;background:#293954;overflow:hidden;border-radius:5px}.progress-track div{height:100%;background:linear-gradient(90deg,#4371d6,#1ccaa7);width:0;transition:width .1s}.playback-foot{margin-top:11px;display:flex;gap:10px;justify-content:space-between;align-items:center}.playback-foot span{font-size:10px;color:var(--muted)}.playback-foot div{display:flex;gap:8px;align-items:center;white-space:nowrap}.playback-foot label{color:var(--muted);font-size:10px}.playback-foot select{background:#20314a;border:1px solid #344a69;border-radius:6px;padding:4px;color:#dbe9ff}.context-head{padding:13px 15px;border-bottom:1px solid var(--edge)}.context-head strong{font-size:13px}.context-head span{display:block;font-size:11px;color:var(--muted);margin-top:5px}.context-frames button{padding:7px 10px}.context-chart{height:190px;background:#0b1422}.side-card{padding:19px}.guide-card{background:linear-gradient(135deg,#1a2c4a 0%,#111c2d 82%)}.eyebrow{font-size:10px;color:#91b3ff;letter-spacing:1.2px;font-weight:800}.guide-card h2{font-size:22px;line-height:1.4;margin:11px 0 7px}.guide-card p{font-size:12px;color:#aebcd5;line-height:1.8;margin:0}.guide-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:15px}.guide-tags span{background:#284465;border:1px solid #355376;border-radius:5px;padding:5px 8px;color:#c4d8f8;font-size:10px}.side-heading{margin-bottom:13px}.side-heading h2{font-size:14px;margin:0}.tiny-label{font-size:10px;color:var(--muted)}.direction-group{display:flex;gap:6px;margin-bottom:15px}.direction-group button{flex:1;background:#142135;border:1px solid #314260;color:#a6b6d2;border-radius:8px;font-size:11px;min-height:36px}.direction-group button.selected{background:#28446c;color:white;border-color:#638cf2}.field-label{font-size:11px;display:block;margin-bottom:7px;color:#bccae1}.input-card textarea{resize:vertical;width:100%;max-height:280px;min-height:110px;border:1px solid #30415d;border-radius:9px;background:#0a1422;color:#e5eefb;line-height:1.65;padding:10px 11px;font-size:12px;outline:none}.input-card textarea:focus{border-color:var(--blue)}.input-card textarea::placeholder{color:#647690}.full{width:100%;margin-top:10px}.save-hint{font-size:10px;color:#71839e;line-height:1.6;margin-top:10px}.prediction-history{display:flex;flex-direction:column;gap:8px;max-height:370px;overflow-y:auto}.empty-state{font-size:12px;color:var(--muted);line-height:1.6}.history-entry{background:#0d1829;border:1px solid #263854;border-radius:10px;padding:11px}.entry-meta{display:flex;justify-content:space-between;gap:5px;align-items:center;color:#91a5c4;font-size:10px}.entry-meta b{font-size:11px;color:#dfe7fa}.history-entry p{white-space:pre-wrap;overflow-wrap:anywhere;margin:9px 0 0;line-height:1.6;color:#cbd6e9;font-size:11px}.history-entry .entry-context{color:#86a2d2;font-size:10px;margin-top:6px}.entry-actions{display:flex;justify-content:flex-end;margin-top:7px}.entry-actions button{background:transparent;border:0;color:#c99292;font-size:10px}.data-card p{font-size:11px;color:#9dabc5;line-height:1.75;margin:0 0 8px;white-space:pre-line;overflow-wrap:anywhere}.data-card .full{margin-top:7px}.privacy-line{font-size:10px;color:#8899b2;margin-top:12px;line-height:1.7}footer{text-align:center;padding:25px 10px 40px;color:#6f819e;font-size:11px;line-height:1.8}footer span{color:#8a91a6}.toast{position:fixed;z-index:99;bottom:25px;left:50%;transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;background:#223855;color:white;border:1px solid #466797;border-radius:10px;padding:11px 17px;box-shadow:0 8px 25px #0008;transition:all .2s;max-width:min(90vw,480px);text-align:center;font-size:12px}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}@media(max-width:1150px){.workspace{grid-template-columns:minmax(0,1fr) 285px}.tool-hint{display:none}.playback-buttons{gap:6px}.square-btn{min-width:45px}.playback-buttons .play-btn{min-width:96px}.playback-buttons .wide-btn{padding:0 7px}.timeframes button{padding:8px 9px}}@media(max-width:950px){.workspace{grid-template-columns:1fr}.sidebar{display:grid;grid-template-columns:1fr 1fr;align-items:start}.history-card,.data-card{grid-column:span 1}.guide-card{min-height:100%}.chart-wrap{height:420px}}@media(max-width:630px){.app-shell{padding:0 10px}.topbar{padding:12px 1px;height:auto;min-height:80px;align-items:flex-start;flex-wrap:wrap}.brand strong{font-size:16px}.top-actions{width:100%;justify-content:space-between;gap:6px}.top-actions .btn{font-size:11px;padding:8px 9px}.data-pill{font-size:10px;padding:8px 9px}.workspace{margin-top:12px;gap:10px}.status-strip{grid-template-columns:1fr 1.5fr;gap:7px}.status-card{padding:10px}.status-card:last-child{display:none}.status-card strong{font-size:12px}.status-card i{font-size:9px}.chart-head{padding:10px;gap:8px}.chart-head-left strong{font-size:12px}.timeframes{width:100%;justify-content:space-between}.timeframes button{font-size:11px;padding:9px 10px;flex:1}.drawing-tools{padding:6px}.tool{font-size:14px;padding:7px 9px}.tool span{font-size:10px}.chart-wrap{height:360px}.chart-bottom{padding:10px}.chart-nav{width:100%;justify-content:space-between;gap:3px}.chart-nav button{padding:7px;font-size:10px}.chart-nav input{width:65px}.playback-card{padding:11px}.playback-buttons{gap:5px;flex-wrap:wrap}.playback-buttons button{min-height:44px}.square-btn{flex:1;min-width:0}.playback-buttons .play-btn{flex:2;min-width:75px}.playback-buttons .wide-btn{flex:100%;margin-left:0}.playback-foot{align-items:flex-start}.playback-foot span{flex:1}.context-chart{height:145px}.sidebar{display:flex;gap:10px}.side-card{padding:15px}.guide-card h2{font-size:19px}.toast{bottom:70px}}@media(min-width:951px) and (max-height:800px){.chart-wrap{height:335px}.context-chart{height:160px}}
+@media(max-width:630px){.guide-card{min-height:auto}.chart-nav label{font-size:10px}}
+
+.transfer-divider{border-top:1px solid var(--edge);margin-top:15px;padding-top:13px;color:#9eb4d7;font-weight:700;font-size:11px;text-align:center}.transfer-label{display:block;text-align:center;cursor:pointer}.transfer-label:hover{filter:brightness(1.12)}
+
+</style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+        <div><strong>REPLAY <em>LAB</em></strong><small>環境認識 × ポイント予想</small></div>
+      </div>
+      <div class="top-actions">
+        <span id="dataPill" class="data-pill">● 架空データで練習中</span>
+        <label class="btn btn-accent import-label" for="csvInput"><span class="ico">↥</span> CSVを読み込む</label>
+        <input id="csvInput" type="file" accept=".csv,.txt,text/csv,text/plain" hidden>
+        <button class="btn btn-outline" id="resetDemo" type="button" title="架空の練習用データに戻る">デモ</button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="main-column" aria-label="チャート操作">
+        <div class="status-strip">
+          <div class="status-card"><span>銘柄</span><strong>XAUUSD <i>／ 過去チャート</i></strong></div>
+          <div class="status-card"><span>仮想時刻（CSV記載の時計）</span><strong id="clockLabel">―</strong></div>
+          <div class="status-card"><span>進捗</span><strong id="progressLabel">―</strong></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head">
+            <div class="chart-head-left"><span class="live-dot"></span><strong>メインチャート</strong><span id="marketLabel" class="muted">M15</span></div>
+            <div class="timeframes" id="timeframes" role="group" aria-label="表示時間足">
+              <button data-tf="M1">M1</button><button data-tf="M5">M5</button><button data-tf="M15" class="active">M15</button><button data-tf="M30">M30</button><button data-tf="H1">H1</button><button data-tf="H4">H4</button><button data-tf="D1">D1</button>
+            </div>
+          </div>
+          <div class="drawing-tools">
+            <div class="tool-group">
+              <button data-tool="pan" class="tool active" title="チャートを左右に動かす">✥ <span>移動</span></button>
+              <button data-tool="line" class="tool" title="チャートをクリックして水平線を引く">━ <span>水平線</span></button>
+              <button data-tool="zone" class="tool" title="2つの価格を順番に選んでゾーンを作る">▤ <span>ゾーン</span></button>
+              <button id="undoDrawing" class="tool" title="最後の描画を取り消す">↶ <span>戻す</span></button>
+              <button id="clearDrawing" class="tool" title="すべての描画を削除">⌫ <span>全消去</span></button>
+            </div>
+            <span id="toolHint" class="tool-hint">ドラッグで過去へ。水平線・ゾーンはボタン選択後にチャートをタップ。</span>
+          </div>
+          <div class="chart-wrap"><canvas id="mainChart" aria-label="XAUUSDの過去ローソク足チャート"></canvas><div class="chart-watermark" id="chartWatermark">DEMO DATA · NOT MARKET PRICES</div></div>
+          <div class="chart-bottom">
+            <span id="ohlcLabel">O ― H ― L ― C ―</span>
+            <div class="chart-nav"><button id="historyLeft" title="古いローソク足を見る">◀ 過去へ</button><button id="backToNow" title="仮想時刻の最新ローソク足へ">現在位置へ ↗</button><label>表示幅 <input id="zoomRange" type="range" min="30" max="180" step="10" value="90" aria-label="表示する足の数"></label></div>
+          </div>
+        </div>
+
+        <section class="playback-card" aria-label="リプレイ操作">
+          <div class="playback-title"><div><strong>REPLAY CONTROL</strong><span>未来を見ずに1歩ずつ</span></div><button class="btn subtle" id="randomBtn" title="ランダムな過去時点から出題">⤨ ランダム出題</button></div>
+          <div class="playback-buttons">
+            <button id="backOne" class="square-btn" title="M1データを1本戻す">◀</button>
+            <button id="playBtn" class="play-btn">▶ <span>再生</span></button>
+            <button id="nextOne" class="square-btn" title="M1データを1本進める">+1</button>
+            <button id="nextFive" class="square-btn" title="M1データを5本進める">+5</button>
+            <button id="nextFifteen" class="square-btn" title="M1データを15本進める">+15</button>
+            <button id="nextOneBar" class="wide-btn" title="選択中の時間足の次の足が確定するまで進める">＋ 選択足1本</button>
+          </div>
+          <div class="progress-track"><div id="progressFill"></div></div>
+          <div class="playback-foot"><span>※ +1/+5/+15 は読み込んだM1足の本数。相場の休場・欠損で経過時間とは異なることがあります。</span><div><label for="speedSelect">再生速度</label><select id="speedSelect"><option value="1">×1</option><option value="5" selected>×5</option><option value="20">×20</option></select></div></div>
+        </section>
+
+        <section class="context-card" aria-label="上位足確認用チャート">
+          <div class="context-head"><div><strong>上位足プレビュー</strong><span>仮想時刻までの値動きだけを表示</span></div><div class="context-frames" id="contextFrames"><button data-context="H1" class="active">H1</button><button data-context="H4">H4</button><button data-context="D1">D1</button></div></div>
+          <div class="context-chart"><canvas id="contextChart" aria-label="同期した上位足チャート"></canvas></div>
+        </section>
+      </section>
+
+      <aside class="sidebar" aria-label="分析メモと学習記録">
+        <section class="side-card guide-card"><span class="eyebrow">TODAY'S MISSION</span><h2>① 環境認識<br>② 反応ポイント予想</h2><p>上位足の流れを把握 → 押し安値・戻り高値を探す → 水平線やゾーンを描く → 今後の動きを予想する。</p><div class="guide-tags"><span>ちゅぱゾーン</span><span>ダウ</span><span>MTF</span></div></section>
+        <section class="side-card input-card">
+          <div class="side-heading"><h2>予想を固定する</h2><span class="tiny-label">結果を見る前に記録</span></div>
+          <div class="direction-group" id="directionGroup"><button data-direction="up" class="selected">↗ 上昇</button><button data-direction="down">↘ 下落</button><button data-direction="range">↔ レンジ</button></div>
+          <label class="field-label" for="predictionText">根拠・想定シナリオ</label>
+          <textarea id="predictionText" rows="5" placeholder="例：H1は上昇ダウ。M15で押し安値上のゾーンに接近。反発を待ち、直近高値までの上昇を想定。割れたら無効。"></textarea>
+          <button id="savePrediction" class="btn btn-accent full">この時点の予想を保存 <span>↗</span></button>
+          <div class="save-hint">予想はこの端末のブラウザに保存されます。別端末へは下のJSON引き継ぎ機能を利用できます。</div>
+        </section>
+        <section class="side-card history-card"><div class="side-heading"><h2>練習ログ</h2><span id="historyCount" class="tiny-label">0件</span></div><div id="predictionHistory" class="prediction-history"><p class="empty-state">予想を記録するとここに表示されます。</p></div><button id="exportNotes" class="btn btn-outline full">練習ログを書き出す（JSON）</button></section>
+        <section class="side-card data-card"><div class="side-heading"><h2>データと保存</h2></div><p id="datasetInfo">準備中...</p><button id="savePosition" class="btn btn-outline full">現在の練習位置を保存</button><button id="restorePosition" class="btn btn-outline full">保存した位置へ戻る</button>
+          <div class="transfer-divider">PC ⇄ スマホ 引き継ぎ（手動）</div>
+          <button id="exportSession" class="btn btn-outline full">練習状態を書き出す（JSON）</button>
+          <label for="sessionInput" class="btn btn-outline full import-label transfer-label">練習状態を読み込む（JSON）</label><input id="sessionInput" type="file" accept=".json,application/json" hidden><div class="privacy-line">🔒 CSVの解析・チャート表示はブラウザ内で処理します。</div></section>
+      </aside>
+    </main>
+    <footer>Replay Lab v0.1 · 環境認識トレーニング用試作品 · 売買注文機能なし · <span>価格や時刻の再現精度を保証するものではありません</span></footer>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script>
+/* Replay Lab v0.1 — dependency-free canvas chart.
+   Data clock: timestamps are interpreted as the clock shown in the CSV (broker/server time).
+   They are stored as UTC numeric values ONLY for stable arithmetic/bucketing; this is not a claim
+   that the broker clock is UTC. A higher-timeframe bar is truncated at the replay M1 cursor. */
+(function () {
+  'use strict';
+  const $ = (s) => document.querySelector(s);
+  const $$ = (s) => [...document.querySelectorAll(s)];
+  const TF = {M1:1,M5:5,M15:15,M30:30,H1:60,H4:240,D1:1440};
+  const MAX_CSV_BYTES = 65 * 1024 * 1024;
+  const MAX_M1_BARS = 350000;
+  const state = {
+    bars: [], groups: {}, dataset:'demo', filename:'', datasetLabel:'架空の練習用データ',
+    tf:'M15', contextTf:'H1', cursor:0, session:'base', direction:'up', tool:'pan', zoneStart:null,
+    visible:90, pan:0, contextVisible:85, contextPan:0, hover:null,
+    drawings:[], predictions:[], timer:null, playbackSpeed:5, status:'初期化中'
+  };
+  let toastTimer=null;
+  const canvas = $('#mainChart'), contextCanvas=$('#contextChart');
+  const charts = {main:{canvas, cache:null,panKey:'pan',visibleKey:'visible'}, context:{canvas:contextCanvas,cache:null,panKey:'contextPan',visibleKey:'contextVisible'}};
+
+  function notify(message){ const node=$('#toast');node.textContent=message;node.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>node.classList.remove('show'),3000); }
+  function safeGet(key){try{return localStorage.getItem(key)}catch(_){return null}}
+  function safeSet(key,value){try{localStorage.setItem(key,value)}catch(_){}}
+  const key=(name)=>`fxreplay:v1:${state.dataset}:${name}`;
+  function showClock(t,withDay=true){
+    const s=new Date(t).toISOString();return withDay?s.slice(0,10).replaceAll('-','/')+' '+s.slice(11,16):s.slice(11,16);
+  }
+  function digits(n){return Number(n).toFixed(2)}
+  function download(name,content,mime){const blob=new Blob([content],{type:mime});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500)}
+  function lcg(seed){let s=seed>>>0;return ()=>((s=Math.imul(1664525,s)+1013904223>>>0)/4294967296)}
+  function generateDemo(){
+    let seed=lcg(20261010),t=Date.UTC(2025,0,6,0,0),value=2660;
+    const arr=[];
+    while(arr.length<24500){
+      const day=new Date(t).getUTCDay();
+      if(day!==0&&day!==6){
+        const j=arr.length,wave=Math.sin(j/720)*0.28+Math.sin(j/1700)*0.35;
+        const swing=j<4400?0.045:j<8300?-0.052:j<14000?0.038:j<19500?-0.03:0.044;
+        const movement=(seed()-.5)*1.9+wave+swing;
+        const open=value,close=value+movement,high=Math.max(open,close)+seed()*.7,low=Math.min(open,close)-seed()*.7;
+        arr.push({t,o:open,h:high,l:low,c:close});value=close;
+      }
+      t+=60000;
+    }
+    return arr;
+  }
+  // A CSV written from MT5's export script can use DATE;TIME;OPEN;HIGH;LOW;CLOSE,
+  // while native MT5 history exports may use <DATE> <TIME> <OPEN> ... tab separated.
+  function parseTimestamp(date,time){
+    const m=String(date||'').trim().match(/^(\d{4})[.\/-](\d{1,2})[.\/-](\d{1,2})(?:[ T](\d{1,2}):(\d{2})(?::(\d{2}))?)?$/);
+    if(!m)return NaN;
+    const tm=String(time||'').trim().match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
+    const hour=tm?+tm[1]:+(m[4]||0),min=tm?+tm[2]:+(m[5]||0),sec=tm?+(tm[3]||0):+(m[6]||0);
+    if(+m[2]>12||+m[2]<1||+m[3]<1||+m[3]>31||hour>23||min>59||sec>59)return NaN;
+    const t=Date.UTC(+m[1],+m[2]-1,+m[3],hour,min,sec);
+    const d=new Date(t);
+    if(d.getUTCFullYear()!==+m[1]||d.getUTCMonth()!==+m[2]-1||d.getUTCDate()!==+m[3])return NaN;
+    return t;
+  }
+  function splitCsvRow(s,delim){
+    if(delim===' ')return s.trim().split(/\s+/);
+    // Practical CSV quoting support; the OHLC fields contain no embedded delimiters.
+    const out=[];let buff='',quote=false;
+    for(let i=0;i<s.length;i++){
+      const c=s[i];if(c==='"'){if(quote&&s[i+1]==='"'){buff+='"';i++}else quote=!quote;continue}
+      if(c===delim&&!quote){out.push(buff.trim());buff=''}else buff+=c;
+    }out.push(buff.trim());return out;
+  }
+  function parseCSV(text){
+    const lines=text.replace(/^\uFEFF/,'').split(/\r?\n/).filter(x=>x.trim().length);
+    if(lines.length<20)throw new Error('データ行が少なすぎます（20行以上必要です）');
+    if(lines.length>MAX_M1_BARS+1)throw new Error(`データ量が多すぎます。初版は最大${MAX_M1_BARS.toLocaleString()}行までです。期間を分割してください。`);
+    const first=lines[0]; const delim=first.includes('\t')?'\t':first.includes(';')?';':first.includes(',')?',':' ';
+    const h=splitCsvRow(first,delim).map(x=>x.replace(/[^a-zA-Z]/g,'').toLowerCase());
+    const hasHeader=h.includes('open')&&h.includes('close');
+    const ind=hasHeader?Object.fromEntries(h.map((x,i)=>[x,i])):{date:0,time:1,open:2,high:3,low:4,close:5};
+    const hasSeparateTime=ind.time!==undefined;
+    const out=[];let bad=0;
+    for(let j=hasHeader?1:0;j<lines.length;j++){
+      const f=splitCsvRow(lines[j],delim);
+      const t=parseTimestamp(f[ind.date??0],hasSeparateTime?f[ind.time]:undefined);
+      const n=(col)=>Number(f[ind[col]]);
+      const o=n('open'),hi=n('high'),lo=n('low'),c=n('close');
+      if(!Number.isFinite(t)||![o,hi,lo,c].every(Number.isFinite)||o<=0||lo>Math.min(o,c)||hi<Math.max(o,c)||hi<lo){bad++;continue}
+      out.push({t,o,h:hi,l:lo,c});
+    }
+    out.sort((a,b)=>a.t-b.t);
+    const clean=[];
+    for(const v of out){if(clean.length&&clean[clean.length-1].t===v.t){clean[clean.length-1]=v}else clean.push(v)}
+    if(clean.length<20)throw new Error('有効なOHLC行が20本未満です。DATE/TIME/OPEN/HIGH/LOW/CLOSE列をご確認ください。');
+    if(clean.some((x,i)=>i&&x.t-clean[i-1].t<60000))throw new Error('M1以外の足や秒単位の重複が含まれています。M1履歴を取り込んでください。');
+    return {bars:clean,discarded:bad,duplicates:out.length-clean.length};
+  }
+  function makeGroups(bars,minutes){
+    const groups=[],ms=minutes*60000;
+    for(let i=0;i<bars.length;i++){
+      const b=bars[i],bucket=Math.floor(b.t/ms)*ms,prev=groups[groups.length-1];
+      if(prev&&prev.t===bucket){prev.h=Math.max(prev.h,b.h);prev.l=Math.min(prev.l,b.l);prev.c=b.c;prev.last=i}
+      else groups.push({t:bucket,o:b.o,h:b.h,l:b.l,c:b.c,first:i,last:i});
+    }
+    return groups;
+  }
+  function binaryGroupIndex(groups,idx){
+    let lo=0,hi=groups.length-1;
+    while(lo<hi){const mid=Math.ceil((lo+hi)/2);if(groups[mid].first<=idx)lo=mid;else hi=mid-1}return lo;
+  }
+  function partialGroup(group,cursor){
+    if(group.last<=cursor)return group;
+    let h=-Infinity,l=Infinity,c=group.o;
+    for(let j=group.first;j<=cursor;j++){const r=state.bars[j];h=Math.max(h,r.h);l=Math.min(l,r.l);c=r.c}
+    return {...group,h,l,c,last:cursor};
+  }
+  function restoreStudy(){
+    const draw=safeGet(key('drawings')),pred=safeGet(key('predictions')),pos=safeGet(key('position'));
+    try{state.drawings=draw?JSON.parse(draw):[]}catch(_){state.drawings=[]}
+    try{state.predictions=pred?JSON.parse(pred):[]}catch(_){state.predictions=[]}
+    if(pos){try{const o=JSON.parse(pos);state.cursor=Math.min(state.bars.length-1,Math.max(0,Number(o.cursor)||0));state.tf=TF[o.tf]?o.tf:'M15';state.contextTf=['H1','H4','D1'].includes(o.contextTf)?o.contextTf:'H1';state.session=String(o.session||'base');}catch(_){}}
+    $('#predictionText').value='';state.tool='pan';state.pan=0;state.contextPan=0;state.zoneStart=null;
+    updateSelection();renderHistory();
+  }
+  function persist(){safeSet(key('position'),JSON.stringify({cursor:state.cursor,tf:state.tf,contextTf:state.contextTf,session:state.session}));}
+  function saveAnnotations(){safeSet(key('drawings'),JSON.stringify(state.drawings));}
+  function savePredictions(){safeSet(key('predictions'),JSON.stringify(state.predictions));}
+  function loadDataset(bars,{id='demo',name='架空の練習用データ',filename='',randomStart=false}={}){
+    pause();state.bars=bars;state.groups={};for(const [tf,minutes] of Object.entries(TF))state.groups[tf]=makeGroups(bars,minutes);
+    state.dataset=id;state.filename=filename;state.datasetLabel=name;state.session='base';
+    state.cursor=randomStart?Math.floor(bars.length*.65):Math.floor(bars.length*.40);
+    restoreStudy();
+    $('#dataPill').textContent=id==='demo'?'● 架空データで練習中':'● MT5履歴CSVを読込済';
+    $('#dataPill').style.color=id==='demo'?'var(--gold)':'var(--green)';
+    $('#chartWatermark').textContent=id==='demo'?'DEMO DATA · NOT MARKET PRICES':'HISTORICAL CSV · NOT LIVE';
+    $('#datasetInfo').textContent=`${name}\nM1本数：${bars.length.toLocaleString()}本\n収録：${showClock(bars[0].t)} 〜 ${showClock(bars[bars.length-1].t)}\n表示時計：CSV記載のサーバー時刻（タイムゾーン未補正）`;
+    redraw();notify(id==='demo'?'架空データを準備しました。未来は隠しています。':'M1データを読み込みました。未来は隠しています。');
+  }
+  function findCurrent(tf){return binaryGroupIndex(state.groups[tf],state.cursor)}
+  function collectVisible(tf,pan,width,keyName){
+    const groups=state.groups[tf],current=findCurrent(tf),right=Math.max(0,current-pan);
+    const count=width||90,left=Math.max(0,right-count+1);
+    const subset=[];
+    for(let i=left;i<=right;i++){
+      const g=groups[i];if(!g||g.first>state.cursor)break;
+      subset.push(i===current?partialGroup(g,state.cursor):g);
+    }
+    return {subset,right,left,current,total:groups.length};
+  }
+  function fitCanvas(c){
+    const w=Math.max(120,c.clientWidth),h=Math.max(120,c.clientHeight),ratio=Math.min(window.devicePixelRatio||1,2);
+    if(c.width!==Math.round(w*ratio)||c.height!==Math.round(h*ratio)){c.width=Math.round(w*ratio);c.height=Math.round(h*ratio)}
+    const ctx=c.getContext('2d');ctx.setTransform(ratio,0,0,ratio,0,0);return {ctx,w,h};
+  }
+  function priceInfo(v){return digits(v)}
+  function drawChart(which){
+    if(!state.bars.length)return;
+    const panel=charts[which],{ctx,w,h}=fitCanvas(panel.canvas);
+    const main=which==='main',tf=main?state.tf:state.contextTf,visible=state[panel.visibleKey],pan=state[panel.panKey];
+    const {subset,right,left,current}=collectVisible(tf,pan,visible);
+    const plot={x:14,y:13,w:Math.max(20,w-83),h:Math.max(20,h-47)},unit=plot.w/visible;
+    const prices=subset.flatMap(x=>[x.h,x.l]);
+    let high=prices.length?Math.max(...prices):1,low=prices.length?Math.min(...prices):0;
+    const pad=Math.max((high-low)*.13,.8);high+=pad;low-=pad;
+    const priceY=(p)=>plot.y+(high-p)/(high-low)*plot.h;
+    const yPrice=(y)=>high-(y-plot.y)/plot.h*(high-low);
+    panel.cache={plot,high,low,priceY,yPrice,unit,subset,right,left,current,tf};
+    ctx.clearRect(0,0,w,h);ctx.fillStyle='#0b1422';ctx.fillRect(0,0,w,h);
+    // Horizontal price and vertical time grid.
+    ctx.textBaseline='middle';ctx.font='10px ui-sans-serif, sans-serif';
+    for(let r=0;r<=5;r++){
+      const y=plot.y+r/5*plot.h,price=high-r/5*(high-low);
+      ctx.strokeStyle='#223048';ctx.lineWidth=.8;ctx.beginPath();ctx.moveTo(plot.x,y);ctx.lineTo(plot.x+plot.w,y);ctx.stroke();
+      ctx.fillStyle='#8ca0c0';ctx.textAlign='left';ctx.fillText(priceInfo(price),plot.x+plot.w+7,y);
+    }
+    const vStep=Math.max(1,Math.ceil(visible/6));
+    for(let i=0;i<visible;i+=vStep){const x=plot.x+i*unit;ctx.strokeStyle='#1b283a';ctx.beginPath();ctx.moveTo(x,plot.y);ctx.lineTo(x,plot.y+plot.h);ctx.stroke()}
+    // Drawings are only visible at or after the time at which they were created.
+    for(const d of state.drawings){
+      if(d.atIndex>state.cursor || (d.session||'base')!==state.session)continue;
+      if(d.type==='zone'){
+        const top=priceY(Math.max(d.p1,d.p2)),bottom=priceY(Math.min(d.p1,d.p2));
+        ctx.fillStyle='rgba(82,145,253,.13)';ctx.fillRect(plot.x,top,plot.w,bottom-top);
+        ctx.strokeStyle='rgba(104,162,255,.8)';ctx.setLineDash([5,4]);ctx.lineWidth=1;
+        for(const y of [top,bottom]){ctx.beginPath();ctx.moveTo(plot.x,y);ctx.lineTo(plot.x+plot.w,y);ctx.stroke()}
+        ctx.setLineDash([]);
+      }else{
+        const y=priceY(d.p);ctx.strokeStyle='#efbb6c';ctx.lineWidth=1.25;ctx.setLineDash([5,4]);ctx.beginPath();ctx.moveTo(plot.x,y);ctx.lineTo(plot.x+plot.w,y);ctx.stroke();ctx.setLineDash([]);
+      }
+    }
+    // Candles: only subset bars built from data <= replay cursor.
+    subset.forEach((bar,j)=>{
+      const x=plot.x+(visible-subset.length+j+.5)*unit,bull=bar.c>=bar.o,color=bull?'#1bcda5':'#f26d77';
+      if(x<plot.x||x>plot.x+plot.w)return;
+      const yc=priceY(bar.c),yo=priceY(bar.o),yh=priceY(bar.h),yl=priceY(bar.l);
+      ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=Math.max(1,unit<6?.8:1.1);
+      ctx.beginPath();ctx.moveTo(x,yh);ctx.lineTo(x,yl);ctx.stroke();
+      const width=Math.min(14,Math.max(1.4,unit*.64));ctx.fillRect(x-width/2,Math.min(yo,yc),width,Math.max(1,Math.abs(yc-yo)));
+    });
+    ctx.fillStyle='#8092b0';ctx.textAlign='center';ctx.font='10px ui-sans-serif, sans-serif';
+    for(let j=0;j<subset.length;j+=Math.max(1,Math.ceil(subset.length/5))){
+      const b=subset[j],x=plot.x+(visible-subset.length+j+.5)*unit;
+      if(x>=plot.x+22&&x<plot.x+plot.w-30)ctx.fillText(showClock(b.t,false),x,plot.y+plot.h+17);
+    }
+    if(main&&state.zoneStart!==null){
+      const yy=priceY(state.zoneStart);ctx.strokeStyle='#9fcbff';ctx.setLineDash([3,4]);ctx.beginPath();ctx.moveTo(plot.x,yy);ctx.lineTo(plot.x+plot.w,yy);ctx.stroke();ctx.setLineDash([]);
+    }
+    if(main&&state.hover&&state.hover.x>=plot.x&&state.hover.x<=plot.x+plot.w&&state.hover.y>=plot.y&&state.hover.y<=plot.y+plot.h){
+      const {x,y}=state.hover;ctx.strokeStyle='#b0c2e17d';ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(x,plot.y);ctx.lineTo(x,plot.y+plot.h);ctx.moveTo(plot.x,y);ctx.lineTo(plot.x+plot.w,y);ctx.stroke();ctx.setLineDash([]);
+      ctx.fillStyle='#344965';ctx.fillRect(plot.x+plot.w+2,y-10,66,20);ctx.fillStyle='#ecf3ff';ctx.textAlign='center';ctx.font='10px ui-sans-serif,sans-serif';ctx.fillText(priceInfo(yPrice(y)),plot.x+plot.w+34,y);
+    }
+    // When showing a location in the past, clarify that the replay current time is elsewhere.
+    if(pan>0){ctx.fillStyle='#93a7c5';ctx.textAlign='left';ctx.fillText('◀ 過去の足を閲覧中',plot.x+3,plot.y+12)}
+    if(subset.length<2){ctx.fillStyle='#c1cde0';ctx.textAlign='center';ctx.fillText('表示できる足がまだありません',plot.x+plot.w/2,plot.y+plot.h/2)}
+  }
+  function redraw(){
+    if(!state.bars.length)return;
+    drawChart('main');drawChart('context');
+    const b=state.bars[state.cursor];
+    $('#clockLabel').textContent=showClock(b.t);
+    $('#progressLabel').textContent=`${(state.cursor+1).toLocaleString()} / ${state.bars.length.toLocaleString()} M1`;
+    $('#progressFill').style.width=(100*(state.cursor+1)/state.bars.length).toFixed(2)+'%';
+    $('#marketLabel').textContent=state.tf+' · 現在まで';
+    $('#ohlcLabel').textContent=`M1  O ${digits(b.o)}　H ${digits(b.h)}　L ${digits(b.l)}　C ${digits(b.c)}`;
+    $('#nextOne').disabled=state.cursor>=state.bars.length-1;
+    $('#nextFive').disabled=state.cursor>=state.bars.length-1;
+    $('#nextFifteen').disabled=state.cursor>=state.bars.length-1;
+    $('#nextOneBar').disabled=state.cursor>=state.bars.length-1;
+    $('#backOne').disabled=state.cursor<=0;
+    updateSelection();
+  }
+  function updateSelection(){
+    $$('#timeframes button').forEach(b=>b.classList.toggle('active',b.dataset.tf===state.tf));
+    $$('#contextFrames button').forEach(b=>b.classList.toggle('active',b.dataset.context===state.contextTf));
+    $$('.tool-group [data-tool]').forEach(b=>b.classList.toggle('active',b.dataset.tool===state.tool));
+    $$('#directionGroup button').forEach(b=>b.classList.toggle('selected',b.dataset.direction===state.direction));
+    $('#toolHint').textContent=state.tool==='line'?'チャートをクリック・タップして線を引きます':state.tool==='zone'?(state.zoneStart===null?'1つ目の価格をタップ':'2つ目の価格をタップしてゾーン完成'):'ドラッグで過去へ。水平線・ゾーンはボタン選択後にチャートをタップ。';
+  }
+  function moveCursor(increment){
+    if(!state.bars.length)return;
+    const next=Math.max(0,Math.min(state.bars.length-1,state.cursor+increment));
+    if(next===state.cursor){if(state.timer){pause();notify('データの終端に到達しました')}return}
+    state.cursor=next;state.pan=0;state.contextPan=0;state.hover=null;persist();redraw();
+  }
+  function nextWholeBar(){
+    const groups=state.groups[state.tf],i=findCurrent(state.tf);
+    const index=groups[i].last>state.cursor?groups[i].last:(groups[i+1]?.last??state.cursor);
+    moveCursor(index-state.cursor);
+  }
+  function pause(){if(state.timer){clearInterval(state.timer);state.timer=null}$('#playBtn').innerHTML='▶ <span>再生</span>'}
+  function togglePlay(){if(state.timer){pause();return}state.timer=setInterval(()=>moveCursor(state.playbackSpeed),140);$('#playBtn').innerHTML='Ⅱ <span>停止</span>'}
+  function startRandom(){
+    pause();const n=state.bars.length,start=Math.min(n-1,Math.max(500,Math.floor(n*.15))),end=Math.min(n-1,Math.max(start,Math.floor(n*.87)));
+    state.cursor=start+Math.floor(Math.random()*(Math.max(1,end-start)));state.session='random:'+Date.now()+':'+Math.random().toString(36).slice(2,6);
+    state.pan=0;state.contextPan=0;state.hover=null;persist();redraw();renderHistory();notify('新しい練習問題を開始。以前の描画・予想はこの問題には表示しません。');
+  }
+  function renderHistory(){
+    const sessionPredictions=state.predictions.filter(v=>(v.session||'base')===state.session);$('#historyCount').textContent=`${sessionPredictions.length}件`; 
+    const root=$('#predictionHistory');root.textContent='';
+    if(!sessionPredictions.length){const p=document.createElement('p');p.className='empty-state';p.textContent='予想を記録するとここに表示されます。';root.append(p);return}
+    const map={up:'↗ 上昇',down:'↘ 下落',range:'↔ レンジ'};
+    for(const item of sessionPredictions.slice().reverse()){
+      const wrap=document.createElement('div');wrap.className='history-entry';
+      const meta=document.createElement('div');meta.className='entry-meta';
+      const heading=document.createElement('b');heading.textContent=map[item.direction]||item.direction;
+      const when=document.createElement('span');when.textContent=showClock(item.at)+' '+item.tf;
+      meta.append(heading,when);
+      const text=document.createElement('p');text.textContent=item.text;
+      const origin=document.createElement('div');origin.className='entry-context';origin.textContent=`固定時の価格：${digits(item.price)} / M1 #${item.atIndex+1}`;
+      const actions=document.createElement('div');actions.className='entry-actions';
+      const del=document.createElement('button');del.type='button';del.textContent='削除';del.addEventListener('click',()=>{if(!confirm('この予想を削除しますか？'))return;state.predictions=state.predictions.filter(x=>x.id!==item.id);savePredictions();renderHistory()});
+      actions.append(del);wrap.append(meta,text,origin,actions);root.append(wrap);
+    }
+  }
+  function savePrediction(){
+    const text=$('#predictionText').value.trim();if(!text){notify('まず想定シナリオを書いてください');$('#predictionText').focus();return}
+    const b=state.bars[state.cursor];const id=Date.now()+':'+Math.random().toString(36).slice(2);
+    state.predictions.push({id,session:state.session,atIndex:state.cursor,at:b.t,price:b.c,tf:state.tf,direction:state.direction,text});
+    savePredictions();$('#predictionText').value='';renderHistory();notify('未来を見る前の予想を固定しました');
+  }
+  function setTool(name){state.tool=name;state.zoneStart=null;updateSelection();redraw()}
+  function saveDrawing(p){
+    if(state.tool==='line'){
+      state.drawings.push({type:'line',session:state.session,p,atIndex:state.cursor,tf:state.tf});saveAnnotations();notify('水平線を追加しました');
+    }else if(state.tool==='zone'){
+      if(state.zoneStart===null){state.zoneStart=p;notify('ゾーンのもう一方の価格をタップしてください')}
+      else{state.drawings.push({type:'zone',session:state.session,p1:state.zoneStart,p2:p,atIndex:state.cursor,tf:state.tf});state.zoneStart=null;saveAnnotations();notify('ゾーンを追加しました')}
+    }
+    updateSelection();redraw();
+  }
+  function attachChartPointers(which){
+    const panel=charts[which],c=panel.canvas;let drag=null;const pointers=new Map();let pinch=null;
+    const coords=(e)=>{const box=c.getBoundingClientRect();return{x:e.clientX-box.left,y:e.clientY-box.top}};
+    c.addEventListener('pointerdown',e=>{
+      const pos=coords(e);pointers.set(e.pointerId,pos);c.setPointerCapture(e.pointerId);
+      if(pointers.size===1){drag={x:pos.x,y:pos.y,base:state[panel.panKey],moved:false}}
+      if(pointers.size===2){const p=[...pointers.values()];pinch={distance:Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y),base:state[panel.visibleKey]};drag=null}
+    });
+    c.addEventListener('pointermove',e=>{
+      const pos=coords(e);if(pointers.has(e.pointerId))pointers.set(e.pointerId,pos);
+      if(pointers.size===2&&pinch){const p=[...pointers.values()],distance=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y);if(distance>4){state[panel.visibleKey]=Math.max(30,Math.min(200,Math.round(pinch.base*pinch.distance/distance)));if(which==='main')$('#zoomRange').value=state.visible;drawChart(which)}return}
+      if(drag&&pointers.size===1){const delta=pos.x-drag.x;if(Math.abs(delta)>5)drag.moved=true;if(drag.moved){const cache=panel.cache;if(cache){const maxpan=Math.max(0,cache.current);state[panel.panKey]=Math.max(0,Math.min(maxpan,drag.base+Math.round(delta/Math.max(2,cache.unit))));drawChart(which)}}}
+      if(which==='main'&&(!drag||!drag.moved)){state.hover=pos;drawChart('main')}
+    });
+    c.addEventListener('pointerup',e=>{
+      const pos=coords(e);
+      if(pointers.size===1&&drag&&!drag.moved&&which==='main'&&state.tool!=='pan'){
+        const cache=panel.cache,plot=cache?.plot;
+        if(plot&&pos.x>=plot.x&&pos.x<=plot.x+plot.w&&pos.y>=plot.y&&pos.y<=plot.y+plot.h)saveDrawing(Math.round(cache.yPrice(pos.y)*100)/100);
+      }
+      pointers.delete(e.pointerId);if(pointers.size<2)pinch=null;drag=null;if(which==='main')state.hover=null;drawChart(which);
+    });
+    c.addEventListener('pointercancel',e=>{pointers.delete(e.pointerId);pinch=null;drag=null});
+    c.addEventListener('pointerleave',()=>{if(which==='main'&&!drag){state.hover=null;drawChart(which)}});
+    c.addEventListener('wheel',e=>{
+      e.preventDefault();const change=Math.sign(e.deltaY)*10;
+      state[panel.visibleKey]=Math.max(30,Math.min(200,state[panel.visibleKey]+change));
+      if(which==='main')$('#zoomRange').value=state.visible;
+      drawChart(which);
+    },{passive:false});
+    c.addEventListener('dblclick',()=>{state[panel.panKey]=0;drawChart(which)});
+  }
+  async function openDB(){
+    if(!('indexedDB'in window))return null;
+    return new Promise((resolve,reject)=>{const request=indexedDB.open('FXReplayLab',1);request.onupgradeneeded=()=>request.result.createObjectStore('datasets');request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error)});
+  }
+  async function idbSet(value){try{const db=await openDB();if(!db)return false;return await new Promise((resolve,reject)=>{const tx=db.transaction('datasets','readwrite');tx.objectStore('datasets').put(value,'last');tx.oncomplete=()=>{db.close();resolve(true)};tx.onerror=()=>{db.close();reject(tx.error)}})}catch(e){console.warn('IDB write failed',e);return false}}
+  async function idbGet(){try{const db=await openDB();if(!db)return null;return await new Promise((resolve,reject)=>{const tx=db.transaction('datasets','readonly'),r=tx.objectStore('datasets').get('last');r.onsuccess=()=>resolve(r.result||null);r.onerror=()=>reject(r.error);tx.oncomplete=()=>db.close()})}catch(_){return null}}
+  async function handleCSV(file){
+    if(!file)return;
+    if(file.size>MAX_CSV_BYTES){notify('CSVが65MBを超えています。期間を分割してください。');return}
+    $('#dataPill').textContent='読み込み・解析中...';
+    try{
+      await new Promise(r=>setTimeout(r,40));const data=parseCSV(await file.text());
+      const bars=data.bars;
+      const id='csv:'+file.name+':'+bars.length+':'+bars[0].t+':'+bars[bars.length-1].t;
+      loadDataset(bars,{id,name:file.name,filename:file.name,randomStart:true});
+      const packed=bars.map(r=>[r.t,r.o,r.h,r.l,r.c]);
+      const stored=await idbSet({id,name:file.name,bars:packed});
+      if(!stored)notify('CSVは表示できましたが、次回起動用の保存には失敗しました。');
+      else if(data.discarded||data.duplicates)notify(`CSV取込完了（無効${data.discarded}行・重複${data.duplicates}行を除外）`);
+    }catch(e){console.error(e);$('#dataPill').textContent='● 読み込みエラー';notify('CSV読込に失敗：'+e.message)}
+    $('#csvInput').value='';
+  }
+  function bindEvents(){
+    $('#csvInput').addEventListener('change',e=>handleCSV(e.target.files[0]));
+    $('#resetDemo').addEventListener('click',()=>loadDataset(generateDemo(),{id:'demo',name:'架空の練習用データ'}));
+    $$('#timeframes button').forEach(b=>b.addEventListener('click',()=>{state.tf=b.dataset.tf;state.pan=0;persist();redraw()}));
+    $$('#contextFrames button').forEach(b=>b.addEventListener('click',()=>{state.contextTf=b.dataset.context;state.contextPan=0;persist();redraw()}));
+    $$('.tool-group [data-tool]').forEach(b=>b.addEventListener('click',()=>setTool(b.dataset.tool)));
+    $('#undoDrawing').addEventListener('click',()=>{const index=state.drawings.findLastIndex(d=>(d.session||'base')===state.session);if(index<0){notify('消す描画がありません');return}state.drawings.splice(index,1);saveAnnotations();redraw();notify('最後の描画を削除しました')});
+    $('#clearDrawing').addEventListener('click',()=>{if(!state.drawings.some(d=>(d.session||'base')===state.session))return;if(confirm('この問題の水平線・ゾーンをすべて削除しますか？')){state.drawings=state.drawings.filter(d=>(d.session||'base')!==state.session);state.zoneStart=null;saveAnnotations();redraw();notify('描画を削除しました')}});
+    $('#historyLeft').addEventListener('click',()=>{state.pan=Math.min(findCurrent(state.tf),state.pan+Math.round(state.visible*.5));redraw()});
+    $('#backToNow').addEventListener('click',()=>{state.pan=0;state.contextPan=0;redraw()});
+    $('#zoomRange').addEventListener('input',e=>{state.visible=Number(e.target.value);redraw()});
+    $('#backOne').addEventListener('click',()=>{pause();moveCursor(-1)});
+    $('#nextOne').addEventListener('click',()=>{pause();moveCursor(1)});
+    $('#nextFive').addEventListener('click',()=>{pause();moveCursor(5)});
+    $('#nextFifteen').addEventListener('click',()=>{pause();moveCursor(15)});
+    $('#nextOneBar').addEventListener('click',()=>{pause();nextWholeBar()});
+    $('#playBtn').addEventListener('click',togglePlay);$('#randomBtn').addEventListener('click',startRandom);
+    $('#speedSelect').addEventListener('change',e=>state.playbackSpeed=Number(e.target.value));
+    $$('#directionGroup button').forEach(b=>b.addEventListener('click',()=>{state.direction=b.dataset.direction;updateSelection()}));
+    $('#savePrediction').addEventListener('click',savePrediction);
+    $('#exportNotes').addEventListener('click',()=>{if(!state.predictions.length){notify('まだ予想がありません');return}download('ReplayLab_predictions_'+state.dataset.replace(/[^\w]/g,'_').slice(0,30)+'.json',JSON.stringify({dataset:state.datasetLabel,exported:new Date().toISOString(),predictions:state.predictions,drawings:state.drawings},null,2),'application/json;charset=utf-8')});
+    $('#savePosition').addEventListener('click',()=>{persist();notify('この端末に練習位置を保存しました')});
+    $('#exportSession').addEventListener('click',()=>{
+      const b=state.bars[state.cursor];
+      const pack={format:'fxreplay-session-v1',signature:[state.bars.length,state.bars[0].t,state.bars[state.bars.length-1].t],source:state.datasetLabel,cursorTime:b.t,tf:state.tf,contextTf:state.contextTf,session:state.session,drawings:state.drawings,predictions:state.predictions};
+      download('ReplayLab_引き継ぎ_'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify(pack,null,2),'application/json;charset=utf-8');
+      notify('引き継ぎJSONを書き出しました。同じM1データを読み込んだ別端末で取り込めます。');
+    });
+    $('#sessionInput').addEventListener('change',async e=>{
+      const f=e.target.files[0];if(!f)return;
+      try{
+        if(f.size>3*1024*1024)throw new Error('ファイルが大きすぎます');
+        const pack=JSON.parse(await f.text());
+        if(pack.format!=='fxreplay-session-v1')throw new Error('Replay Labの引き継ぎファイルではありません');
+        const expected=[state.bars.length,state.bars[0].t,state.bars[state.bars.length-1].t];
+        if(JSON.stringify(pack.signature)!==JSON.stringify(expected))throw new Error('現在読み込んでいるM1データと一致しません。先に同じCSVを読み込んでください');
+        if(!Array.isArray(pack.drawings)||!Array.isArray(pack.predictions))throw new Error('ファイルの形式が正しくありません');
+        if(pack.drawings.length>15000||pack.predictions.length>15000)throw new Error('引き継ぎデータが多すぎます');
+        const cursor=state.bars.findIndex(b=>b.t===pack.cursorTime);
+        if(cursor<0)throw new Error('引き継ぎ先の日時が現在のCSVに存在しません');
+        if(!confirm('この端末の練習メモ・描画・現在位置を、JSONの内容で上書きして引き継ぎますか？'))return;
+        pause();state.cursor=cursor;state.tf=TF[pack.tf]?pack.tf:'M15';state.contextTf=['H1','H4','D1'].includes(pack.contextTf)?pack.contextTf:'H1';
+        state.session=String(pack.session||'base');state.drawings=pack.drawings;state.predictions=pack.predictions;
+        state.pan=0;state.contextPan=0;state.zoneStart=null;
+        saveAnnotations();savePredictions();persist();renderHistory();redraw();notify('練習位置・予想・描画を引き継ぎました');
+      }catch(err){notify('引き継ぎ失敗：'+err.message)}finally{$('#sessionInput').value=''}
+    });
+
+    $('#restorePosition').addEventListener('click',()=>{const pos=safeGet(key('position'));if(!pos){notify('保存された位置がありません');return}try{const v=JSON.parse(pos);state.cursor=Math.max(0,Math.min(state.bars.length-1,Number(v.cursor)));state.tf=TF[v.tf]?v.tf:'M15';state.contextTf=v.contextTf||'H1';state.session=v.session||'base';state.pan=0;pause();redraw();renderHistory();notify('保存位置に戻りました')}catch(_){notify('復元できませんでした')}});
+    attachChartPointers('main');attachChartPointers('context');
+    new ResizeObserver(()=>redraw()).observe(canvas.parentElement);
+    new ResizeObserver(()=>redraw()).observe(contextCanvas.parentElement);
+    document.addEventListener('visibilitychange',()=>{if(document.hidden)pause()});
+    document.addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName))return;if(e.code==='ArrowRight'){e.preventDefault();pause();moveCursor(1)}else if(e.code==='ArrowLeft'){e.preventDefault();pause();moveCursor(-1)}else if(e.code==='Space'){e.preventDefault();togglePlay()}});
+  }
+  async function initialize(){
+    bindEvents();const previous=await idbGet();
+    if(previous&&Array.isArray(previous.bars)&&previous.bars.length){
+      try{loadDataset(previous.bars.map(([t,o,h,l,c])=>({t,o,h,l,c})),{id:previous.id,name:previous.name,filename:previous.name});return}catch(e){console.warn(e)}
+    }
+    loadDataset(generateDemo(),{id:'demo',name:'架空の練習用データ'});
+  }
+  window.ReplayLabDebug={getState:()=>state,parseCSV,makeGroups,partialGroup,collectVisible,generateDemo,moveCursor,loadDataset};
+  initialize();
+})();
+
+</script>
+</body>
+</html>
