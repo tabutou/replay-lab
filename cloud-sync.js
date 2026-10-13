@@ -131,12 +131,12 @@
     };
   }
   function snapshotJson() { return JSON.stringify(snapshot()); }
-  async function dataRequest(path, method, body) {
+  async function dataRequest(path, method, body, prefer) {
     const token = await getToken();
     const headers = {'apikey': PUBLISHABLE_KEY, 'Authorization': 'Bearer ' + token};
     if (body !== undefined) {
       headers['Content-Type'] = 'application/json';
-      headers.Prefer = 'resolution=merge-duplicates,return=minimal';
+      headers.Prefer = prefer || 'return=representation';
     }
     return request(API + '/rest/v1/' + path, {
       method: method || 'GET', headers,
@@ -150,31 +150,51 @@
     return Array.isArray(rows) && rows.length ? rows[0] : null;
   }
   async function pushNow(force) {
-    if (!session || !session.user || !activeKey) return;
+    if (!session || !session.user || !activeKey || fetching) return;
     if (!ready && !force) return;
-    if (saving) { schedule(); return; }
+    if (saving) return;
     const key = activeKey;
-    const nowKey = findDatasetKey();
-    if (key !== nowKey) return;
+    if (key !== findDatasetKey()) return;
     const json = snapshotJson();
     if (json === savedJson && !force) { status('☁ 保存済み', 'success'); return; }
     saving = true;
     status('☁ 保存中…');
     try {
-      await dataRequest('replay_sessions?on_conflict=user_id,dataset_key', 'POST', [{
-        user_id: session.user.id,
-        dataset_key: key,
-        payload: JSON.parse(json)
-      }]);
+      const urlKey = 'user_id=eq.' + encodeURIComponent(session.user.id)
+        + '&dataset_key=eq.' + encodeURIComponent(key);
+      const timestamp = new Date(Math.max(Date.now(), (Date.parse(remoteUpdatedAt) || 0) + 2)).toISOString();
+      let rows;
+      if (!remoteUpdatedAt) {
+        // Insert once. Never overwrite a record another device has just created.
+        rows = await dataRequest('replay_sessions?on_conflict=user_id,dataset_key&select=updated_at',
+          'POST', [{
+            user_id: session.user.id, dataset_key: key,
+            payload: JSON.parse(json), updated_at: timestamp
+          }], 'resolution=ignore-duplicates,return=representation');
+      } else {
+        // Compare-and-swap using the server's original timestamp.
+        // A concurrent update causes 0 updated rows, not a silent overwrite.
+        const filter = 'replay_sessions?' + urlKey
+          + '&updated_at=eq.' + encodeURIComponent(remoteUpdatedAt)
+          + '&select=updated_at';
+        rows = await dataRequest(filter, 'PATCH',
+          {payload: JSON.parse(json), updated_at: timestamp}, 'return=representation');
+      }
+      if (!Array.isArray(rows) || rows.length !== 1 || !rows[0].updated_at) {
+        ready = false;
+        status('☁ 他端末の更新を検出。自動保存を停止しました。「クラウドを確認」で確認してください。', 'error');
+        return;
+      }
       if (key === activeKey) {
         savedJson = json;
-        remoteUpdatedAt = new Date().toISOString();
+        remoteUpdatedAt = rows[0].updated_at;
         ready = true;
         status('☁ クラウドに保存済み', 'success');
       }
     } catch (e) {
       console.warn('Replay Lab cloud save:', e);
-      status('☁ 保存失敗：' + e.message + '（端末内には保存）', 'error');
+      ready = false;
+      status('☁ 保存失敗：' + e.message + '（端末内には保存。接続回復後に再確認）', 'error');
     } finally {
       saving = false;
       if (key === activeKey && ready && snapshotJson() !== savedJson) schedule();
@@ -187,16 +207,18 @@
     status('☁ 変更あり・まもなく保存');
   }
   async function inspectRemote(force) {
-    if (!session || !session.user) return;
-    if (fetching) return;
+    if (!session || !session.user || fetching || saving) return;
     clearTimeout(saveTimer);
     const key = findDatasetKey();
     if (!key) {
       activeKey = null;
+      remoteUpdatedAt = null;
+      savedJson = null;
       ready = false;
       status('☁ CSVを読み込むと同期できます');
       return;
     }
+    const previousSavedJson = savedJson;
     fetching = true;
     ready = false;
     activeKey = key;
@@ -206,23 +228,36 @@
       if (key !== findDatasetKey() || !session) return;
       const localJson = snapshotJson();
       if (!row) {
+        remoteUpdatedAt = null;
         savedJson = null;
         ready = true;
         status('☁ このCSVの初回保存中…');
+        // Fetching blocks pushNow: release before first insert.
+        fetching = false;
         await pushNow(false);
       } else {
         const remoteData = row.payload;
         if (!remoteData || !Array.isArray(remoteData.drawings) || !Array.isArray(remoteData.predictions)) {
           throw new Error('クラウドの記録形式を確認してください');
         }
-        const remoteJson = JSON.stringify(remoteData);
+        const remoteJson = JSON.stringify({
+          cursorTime: remoteData.cursorTime, tf: remoteData.tf,
+          contextTf: remoteData.contextTf, session: remoteData.session,
+          direction: remoteData.direction,
+          drawings: remoteData.drawings, predictions: remoteData.predictions
+        });
         remoteUpdatedAt = row.updated_at || null;
         if (remoteJson === localJson) {
           savedJson = localJson;
           ready = true;
           status('☁ 最新の状態に同期済み', 'success');
         } else {
-          const accept = window.confirm('このCSVのクラウド記録が見つかりました。\n\nクラウドの練習位置・描画・予想を読み込むと、この端末の記録は上書きされます。\n\nクラウドの続きを開きますか？');
+          const localClean = previousSavedJson !== null && localJson === previousSavedJson;
+          const accept = localClean && !force || window.confirm(
+            'このCSVのクラウド記録が見つかりました。\n\n' +
+            'クラウドの練習位置・描画・予想を読み込むと、この端末の記録は上書きされます。\n\n' +
+            'クラウドの続きを開きますか？'
+          );
           if (accept) {
             applying = true;
             try { app.applyCloud(remoteData); }
@@ -252,11 +287,32 @@
     await inspectRemote(true);
   }
   async function forceSave() {
-    if (!session) return;
-    if (!ready && activeKey) {
-      if (!window.confirm('この端末の練習状態でクラウドを上書きします。ほかの端末の変更が失われる場合があります。続行しますか？')) return;
+    if (!session || !session.user || fetching || saving) return;
+    if (!activeKey) { await inspectRemote(true); return; }
+    clearTimeout(saveTimer);
+    status('☁ 保存先の最新状態を確認中…');
+    try {
+      const row = await readRemote(activeKey);
+      if (activeKey !== findDatasetKey()) return;
+      const different = (row ? row.updated_at : null) !== remoteUpdatedAt;
+      if (different || !ready) {
+        const ok = window.confirm(
+          '他端末に別の練習記録がある可能性があります。\n\n' +
+          'この端末の記録でクラウド側を上書きしてよろしいですか？'
+        );
+        if (!ok) {
+          ready = false;
+          status('☁ 同期停止中。端末内の記録は残っています');
+          return;
+        }
+      }
+      remoteUpdatedAt = row ? row.updated_at : null;
+      ready = true;
+      await pushNow(true);
+    } catch (e) {
+      ready = false;
+      status('☁ 保存先確認に失敗：' + e.message, 'error');
     }
-    await pushNow(true);
   }
   async function signIn() {
     const email = ui.email.value.trim();
@@ -362,6 +418,7 @@
       ready = false;
       activeKey = null;
       savedJson = null;
+      remoteUpdatedAt = null;
       if (session && session.user) inspectRemote();
       else if (session) status('☁ ログイン状態を確認中…');
     }
