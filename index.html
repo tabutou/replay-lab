@@ -109,7 +109,7 @@
           <label for="sessionInput" class="btn btn-outline full import-label transfer-label">練習状態を読み込む（JSON）</label><input id="sessionInput" type="file" accept=".json,application/json" hidden><div class="privacy-line">🔒 CSVの解析・チャート表示はブラウザ内で処理します。</div></section>
       </aside>
     </main>
-    <footer>Replay Lab v0.3 · 環境認識トレーニング用試作品 · 売買注文機能なし · <span>価格や時刻の再現精度を保証するものではありません</span></footer>
+    <footer>Replay Lab v0.3.1 · 環境認識トレーニング用試作品 · 売買注文機能なし · <span>価格や時刻の再現精度を保証するものではありません</span></footer>
   </div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <script>
@@ -310,9 +310,13 @@
       const width=Math.min(14,Math.max(1.4,unit*.64));ctx.fillRect(x-width/2,Math.min(yo,yc),width,Math.max(1,Math.abs(yc-yo)));
     });
     ctx.fillStyle='#8092b0';ctx.textAlign='center';ctx.font='10px ui-sans-serif, sans-serif';
-    for(let j=0;j<subset.length;j+=Math.max(1,Math.ceil(subset.length/5))){
+    // Show broker/server dates as well as clock time; prevent overlapping on mobile.
+    const labelSlots=Math.max(2,Math.floor(plot.w/115));
+    const labelStride=Math.max(1,Math.ceil(subset.length/labelSlots));
+    for(let j=0;j<subset.length;j+=labelStride){
       const b=subset[j],x=plot.x+(visible-subset.length+j+.5)*unit;
-      if(x>=plot.x+22&&x<plot.x+plot.w-30)ctx.fillText(showClock(b.t,false),x,plot.y+plot.h+17);
+      const stamp=showClock(b.t),label=tf==='D1'?stamp.slice(5,10):stamp.slice(5,16);
+      if(x>=plot.x+22&&x<plot.x+plot.w-30)ctx.fillText(label,x,plot.y+plot.h+17);
     }
     if(main&&state.zoneStart!==null){
       const yy=priceY(state.zoneStart);ctx.strokeStyle='#9fcbff';ctx.setLineDash([3,4]);ctx.beginPath();ctx.moveTo(plot.x,yy);ctx.lineTo(plot.x+plot.w,yy);ctx.stroke();ctx.setLineDash([]);
