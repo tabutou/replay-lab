@@ -167,7 +167,7 @@
           <label for="sessionInput" class="btn btn-outline full import-label transfer-label">練習状態を読み込む（JSON）</label><input id="sessionInput" type="file" accept=".json,application/json" hidden><div class="privacy-line">🔒 CSVの解析・チャート表示はブラウザ内で処理します。</div></section>
       </aside>
     </main>
-    <footer>Replay Lab v0.3.1 · 環境認識トレーニング用試作品 · 売買注文機能なし · <span>価格や時刻の再現精度を保証するものではありません</span></footer>
+    <footer>Replay Lab v0.4 · 環境認識トレーニング用試作品 · 売買注文機能なし · <span>価格や時刻の再現精度を保証するものではありません</span></footer>
   </div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <script>
@@ -186,7 +186,7 @@
     bars: [], groups: {}, dataset:'demo', filename:'', datasetLabel:'架空の練習用データ',
     tf:'M15', contextTf:'H1', cursor:0, session:'base', direction:'up', tool:'pan', zoneStart:null,
     visible:90, pan:0, contextVisible:85, contextPan:0, hover:null,
-    drawings:[], predictions:[], timer:null, playbackSpeed:5, status:'初期化中'
+    drawings:[], predictions:[], training:null, timer:null, playbackSpeed:5, status:'初期化中'
   };
   let toastTimer=null;
   const canvas = $('#mainChart'), contextCanvas=$('#contextChart');
@@ -304,7 +304,7 @@
     $('#dataPill').style.color=id==='demo'?'var(--gold)':'var(--green)';
     $('#chartWatermark').textContent=id==='demo'?'DEMO DATA · NOT MARKET PRICES':'HISTORICAL CSV · NOT LIVE';
     $('#datasetInfo').textContent=`${name}\nM1本数：${bars.length.toLocaleString()}本\n収録：${showClock(bars[0].t)} 〜 ${showClock(bars[bars.length-1].t)}\n表示時計：CSV記載のサーバー時刻（タイムゾーン未補正）`;
-    redraw();window.ReplayLabCloud?.datasetChanged();notify(id==='demo'?'架空データを準備しました。未来は隠しています。':'M1データを読み込みました。未来は隠しています。');
+    redraw();window.ReplayLabTraining?.datasetChanged();window.ReplayLabCloud?.datasetChanged();notify(id==='demo'?'架空データを準備しました。未来は隠しています。':'M1データを読み込みました。未来は隠しています。');
   }
   function findCurrent(tf){return binaryGroupIndex(state.groups[tf],state.cursor)}
   function collectVisible(tf,pan,width,keyName){
@@ -401,7 +401,7 @@
     $('#nextFifteen').disabled=state.cursor>=state.bars.length-1;
     $('#nextOneBar').disabled=state.cursor>=state.bars.length-1;
     $('#backOne').disabled=state.cursor<=0;
-    updateSelection();
+    updateSelection();window.ReplayLabTraining?.render();
   }
   function updateSelection(){
     $$('#timeframes button').forEach(b=>b.classList.toggle('active',b.dataset.tf===state.tf));
@@ -412,6 +412,7 @@
   }
   function moveCursor(increment){
     if(!state.bars.length)return;
+    if(window.ReplayLabTraining && !window.ReplayLabTraining.allowed())return;
     const next=Math.max(0,Math.min(state.bars.length-1,state.cursor+increment));
     if(next===state.cursor){if(state.timer){pause();notify('データの終端に到達しました')}return}
     state.cursor=next;state.pan=0;state.contextPan=0;state.hover=null;persist();redraw();
@@ -422,8 +423,9 @@
     moveCursor(index-state.cursor);
   }
   function pause(){if(state.timer){clearInterval(state.timer);state.timer=null}$('#playBtn').innerHTML='▶ <span>再生</span>'}
-  function togglePlay(){if(state.timer){pause();return}state.timer=setInterval(()=>moveCursor(state.playbackSpeed),140);$('#playBtn').innerHTML='Ⅱ <span>停止</span>'}
+  function togglePlay(){if(state.timer){pause();return}if(window.ReplayLabTraining && !window.ReplayLabTraining.allowed())return;state.timer=setInterval(()=>moveCursor(state.playbackSpeed),140);$('#playBtn').innerHTML='Ⅱ <span>停止</span>'}
   function startRandom(){
+    if(window.ReplayLabTraining&&!window.ReplayLabTraining.freeRandom())return;
     pause();const n=state.bars.length,start=Math.min(n-1,Math.max(500,Math.floor(n*.15))),end=Math.min(n-1,Math.max(start,Math.floor(n*.87)));
     state.cursor=start+Math.floor(Math.random()*(Math.max(1,end-start)));state.session='random:'+Date.now()+':'+Math.random().toString(36).slice(2,6);
     state.pan=0;state.contextPan=0;state.hover=null;persist();redraw();renderHistory();notify('新しい練習問題を開始。以前の描画・予想はこの問題には表示しません。');
@@ -447,6 +449,7 @@
     }
   }
   function savePrediction(){
+    if(state.training){notify('練習モードの予想は上の「予想を固定して再生解禁」から記録してね');return}
     const text=$('#predictionText').value.trim();if(!text){notify('まず想定シナリオを書いてください');$('#predictionText').focus();return}
     const b=state.bars[state.cursor];const id=Date.now()+':'+Math.random().toString(36).slice(2);
     state.predictions.push({id,session:state.session,atIndex:state.cursor,at:b.t,price:b.c,tf:state.tf,direction:state.direction,text});
@@ -540,7 +543,7 @@
     $('#savePosition').addEventListener('click',()=>{persist();notify('この端末に練習位置を保存しました')});
     $('#exportSession').addEventListener('click',()=>{
       const b=state.bars[state.cursor];
-      const pack={format:'fxreplay-session-v1',signature:[state.bars.length,state.bars[0].t,state.bars[state.bars.length-1].t],source:state.datasetLabel,cursorTime:b.t,tf:state.tf,contextTf:state.contextTf,session:state.session,drawings:state.drawings,predictions:state.predictions};
+      const pack={format:'fxreplay-session-v1',signature:[state.bars.length,state.bars[0].t,state.bars[state.bars.length-1].t],source:state.datasetLabel,cursorTime:b.t,tf:state.tf,contextTf:state.contextTf,session:state.session,drawings:state.drawings,predictions:state.predictions,training:state.training};
       download('ReplayLab_引き継ぎ_'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify(pack,null,2),'application/json;charset=utf-8');
       notify('引き継ぎJSONを書き出しました。同じM1データを読み込んだ別端末で取り込めます。');
     });
@@ -559,12 +562,13 @@
         if(!confirm('この端末の練習メモ・描画・現在位置を、JSONの内容で上書きして引き継ぎますか？'))return;
         pause();state.cursor=cursor;state.tf=TF[pack.tf]?pack.tf:'M15';state.contextTf=['H1','H4','D1'].includes(pack.contextTf)?pack.contextTf:'H1';
         state.session=String(pack.session||'base');state.drawings=pack.drawings;state.predictions=pack.predictions;
+        window.ReplayLabTraining?.applyCloud(pack.training||null);
         state.pan=0;state.contextPan=0;state.zoneStart=null;
         saveAnnotations();savePredictions();persist();renderHistory();redraw();notify('練習位置・予想・描画を引き継ぎました');
       }catch(err){notify('引き継ぎ失敗：'+err.message)}finally{$('#sessionInput').value=''}
     });
 
-    $('#restorePosition').addEventListener('click',()=>{const pos=safeGet(key('position'));if(!pos){notify('保存された位置がありません');return}try{const v=JSON.parse(pos);state.cursor=Math.max(0,Math.min(state.bars.length-1,Number(v.cursor)));state.tf=TF[v.tf]?v.tf:'M15';state.contextTf=v.contextTf||'H1';state.session=v.session||'base';state.pan=0;pause();redraw();renderHistory();notify('保存位置に戻りました')}catch(_){notify('復元できませんでした')}});
+    $('#restorePosition').addEventListener('click',()=>{if(state.training){notify('練習モード中は保存位置へジャンプできません');return}const pos=safeGet(key('position'));if(!pos){notify('保存された位置がありません');return}try{const v=JSON.parse(pos);state.cursor=Math.max(0,Math.min(state.bars.length-1,Number(v.cursor)));state.tf=TF[v.tf]?v.tf:'M15';state.contextTf=v.contextTf||'H1';state.session=v.session||'base';state.pan=0;pause();redraw();renderHistory();notify('保存位置に戻りました')}catch(_){notify('復元できませんでした')}});
     attachChartPointers('main');attachChartPointers('context');
     new ResizeObserver(()=>redraw()).observe(canvas.parentElement);
     new ResizeObserver(()=>redraw()).observe(contextCanvas.parentElement);
@@ -579,15 +583,15 @@
     loadDataset(generateDemo(),{id:'demo',name:'架空の練習用データ'});
   }
   window.ReplayLabDebug={
-    getState:()=>state,parseCSV,makeGroups,partialGroup,collectVisible,generateDemo,moveCursor,loadDataset,
-    getSnapshot:()=>{const b=state.bars[state.cursor];return {cursorTime:b?.t,tf:state.tf,contextTf:state.contextTf,session:state.session,direction:state.direction,drawings:state.drawings,predictions:state.predictions}},
+    getState:()=>state,parseCSV,makeGroups,partialGroup,collectVisible,generateDemo,moveCursor,loadDataset,notify,pause,redraw,renderHistory,persist,savePredictions,
+    getSnapshot:()=>{const b=state.bars[state.cursor];return {cursorTime:b?.t,tf:state.tf,contextTf:state.contextTf,session:state.session,direction:state.direction,drawings:state.drawings,predictions:state.predictions,training:state.training}},
     applyCloud:(data)=>{
       if(!data||!Array.isArray(data.drawings)||!Array.isArray(data.predictions)||typeof data.cursorTime!=='number')throw new Error('不正なクラウドデータ');
       const idx=state.bars.findIndex(b=>b.t===data.cursorTime);if(idx<0)throw new Error('CSVに該当日時がありません');
       pause();state.cursor=idx;state.tf=TF[data.tf]?data.tf:'M15';
       state.contextTf=['H1','H4','D1'].includes(data.contextTf)?data.contextTf:'H1';
       state.session=String(data.session||'base');state.direction=['up','down','range'].includes(data.direction)?data.direction:'up';
-      state.drawings=data.drawings;state.predictions=data.predictions;state.pan=0;state.contextPan=0;state.hover=null;state.zoneStart=null;
+      state.drawings=data.drawings;state.predictions=data.predictions;window.ReplayLabTraining?.applyCloud(data.training||null);state.pan=0;state.contextPan=0;state.hover=null;state.zoneStart=null;
       persist();saveAnnotations();savePredictions();renderHistory();redraw();
     }
   };
@@ -595,6 +599,7 @@
 })();
 
 </script>
-<script src="./cloud-sync.js?v=0.3"></script>
+<script src="./cloud-sync.js?v=0.4"></script>
+<script src="./trainer.js?v=0.4"></script>
 </body>
 </html>
