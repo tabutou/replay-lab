@@ -127,7 +127,8 @@
       session: data.session,
       direction: data.direction,
       drawings: data.drawings,
-      predictions: data.predictions
+      predictions: data.predictions,
+      training: data.training || null
     };
   }
   function snapshotJson() { return JSON.stringify(snapshot()); }
@@ -244,7 +245,8 @@
           cursorTime: remoteData.cursorTime, tf: remoteData.tf,
           contextTf: remoteData.contextTf, session: remoteData.session,
           direction: remoteData.direction,
-          drawings: remoteData.drawings, predictions: remoteData.predictions
+          drawings: remoteData.drawings, predictions: remoteData.predictions,
+          training: remoteData.training || null
         });
         remoteUpdatedAt = row.updated_at || null;
         if (remoteJson === localJson) {
