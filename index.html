@@ -12,6 +12,23 @@
 .transfer-divider{border-top:1px solid var(--edge);margin-top:15px;padding-top:13px;color:#9eb4d7;font-weight:700;font-size:11px;text-align:center}.transfer-label{display:block;text-align:center;cursor:pointer}.transfer-label:hover{filter:brightness(1.12)}
 
 .cloud-card{margin-top:14px;border:1px solid #314667;background:#132039;border-radius:12px;padding:15px}.cloud-row{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.cloud-status{color:#98afcc;font-size:11px;margin:9px 0;overflow-wrap:anywhere}.cloud-status[data-kind=error]{color:#f99}.cloud-status[data-kind=success]{color:#7ce5bf}.cloud-controls{display:flex;gap:7px;flex-wrap:wrap}.cloud-controls button{flex:1;font-size:11px}.cloud-login{padding-top:12px;display:grid;gap:8px}.cloud-login input{width:100%;padding:10px 11px;border-radius:8px;border:1px solid #345074;color:#e8effb;background:#0b1628}.cloud-card [hidden]{display:none!important}
+
+/* Guided, future-locked question mode */
+.training-card{border:1px solid #365580;background:linear-gradient(125deg,#14233d,#0f1c30);border-radius:14px;padding:16px;margin-bottom:14px;display:grid;gap:10px}
+.training-card [hidden]{display:none!important}
+.training-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.training-heading strong{font-size:14px}
+.training-pill{font-size:11px;color:#b7c9e9;border:1px solid #425b84;border-radius:50px;padding:5px 10px}
+.training-actions{display:flex;gap:8px;flex-wrap:wrap}
+.training-actions>.btn{flex:1 1 140px;min-height:40px}
+.training-form{display:grid;gap:9px}
+.training-form label{font-size:12px;color:#cbd9ed;display:grid;gap:6px}
+.training-form textarea,.training-form select{width:100%;border:1px solid #355073;border-radius:9px;background:#0b1628;color:#e8eef9;padding:11px;font:inherit;font-size:13px}
+.training-form textarea{resize:vertical;min-height:78px}
+.training-form textarea[readonly],.training-form select:disabled{opacity:.7}
+.training-footnote{font-size:11px;line-height:1.65;color:#9cafd0}
+.training-locked{color:#f5c782;font-weight:600}
+.training-card .btn:disabled{opacity:.45;cursor:not-allowed}
 </style>
 </head>
 <body>
@@ -59,6 +76,47 @@
             <div class="chart-nav"><button id="historyLeft" title="古いローソク足を見る">◀ 過去へ</button><button id="backToNow" title="仮想時刻の最新ローソク足へ">現在位置へ ↗</button><label>表示幅 <input id="zoomRange" type="range" min="30" max="180" step="10" value="90" aria-label="表示する足の数"></label></div>
           </div>
         </div>
+
+        <section class="training-card" aria-label="1問完結トレーニング">
+          <div class="training-heading"><strong>🎯 1問完結トレーニング</strong><span id="trainPhase" class="training-pill">自由モード</span></div>
+          <div class="training-actions">
+            <button id="trainStart" class="btn btn-accent" type="button">ランダムな1問を始める</button>
+            <button id="trainExit" class="btn btn-outline" type="button" hidden>自由モードに戻る</button>
+          </div>
+          <div id="trainForm" class="training-form" hidden>
+            <p id="trainHelp" class="training-footnote">環境認識とポイント予想を記入して、未来を見る前にシナリオを固定しよう。</p>
+            <label>① 環境認識（上位足・ダウ・方向）
+              <textarea id="trainEnvironment" maxlength="3000" placeholder="例：D1 / H4 / H1の流れ、押し安値・戻り高値の位置など"></textarea>
+            </label>
+            <label>② 反応ポイント予想（ちゅぱゾーン等）
+              <textarea id="trainPoint" maxlength="3000" placeholder="例：注目する価格帯、根拠、抜けたら無効となる水準"></textarea>
+            </label>
+            <label>③ 今後の方向予想
+              <select id="trainDirection"><option value="up">↗ 上昇</option><option value="down">↘ 下落</option><option value="range">↔ レンジ</option></select>
+            </label>
+            <label>④ シナリオ（何が起きたら、どう動くか）
+              <textarea id="trainScenario" maxlength="3000" placeholder="例：価格帯への到達→反応確認→上昇を想定。明確に割れたら撤回。"></textarea>
+            </label>
+            <div class="training-actions">
+              <button id="trainLock" class="btn btn-accent" type="button">🔒 予想を固定して再生解禁</button>
+              <button id="trainToReview" class="btn btn-outline" type="button" hidden>答え合わせ・振り返りへ</button>
+            </div>
+            <div id="trainReviewForm" class="training-form" hidden>
+              <label>⑤ 実際の値動きと違った点・次の改善
+                <textarea id="trainReview" maxlength="4000" placeholder="予想通りだった点／外れた点／見落とした環境認識を書こう"></textarea>
+              </label>
+              <label>振り返りの判定
+                <select id="trainOutcome"><option value="matched">概ね想定通り</option><option value="partial">一部想定通り</option><option value="missed">想定と異なった</option><option value="unclear">判断保留</option></select>
+              </label>
+              <div class="training-actions">
+                <button id="trainFinish" class="btn btn-accent" type="button">振り返りを記録して完了</button>
+                <button id="trainResume" class="btn btn-outline" type="button">もう少し再生する</button>
+              </div>
+            </div>
+            <p id="trainSummary" class="training-footnote" hidden></p>
+          </div>
+          <p class="training-footnote">練習中は予想を固定するまでコマ送り・再生をロック。通常の自由モードは引き続き使えます。</p>
+        </section>
 
         <section class="playback-card" aria-label="リプレイ操作">
           <div class="playback-title"><div><strong>REPLAY CONTROL</strong><span>未来を見ずに1歩ずつ</span></div><button class="btn subtle" id="randomBtn" title="ランダムな過去時点から出題">⤨ ランダム出題</button></div>
