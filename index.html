@@ -445,7 +445,14 @@
       const origin=document.createElement('div');origin.className='entry-context';origin.textContent=`固定時の価格：${digits(item.price)} / M1 #${item.atIndex+1}`;
       const actions=document.createElement('div');actions.className='entry-actions';
       const del=document.createElement('button');del.type='button';del.textContent='削除';del.addEventListener('click',()=>{if(!confirm('この予想を削除しますか？'))return;state.predictions=state.predictions.filter(x=>x.id!==item.id);savePredictions();renderHistory()});
-      actions.append(del);wrap.append(meta,text,origin,actions);root.append(wrap);
+      actions.append(del);wrap.append(meta,text,origin,actions);
+      if(item.trainingResult){
+        const review=document.createElement('p');review.className='entry-context';
+        review.style.whiteSpace='pre-wrap';
+        review.textContent='【振り返り：'+(item.trainingResult.label||'記録済み')+'】\n'+(item.trainingResult.review||'');
+        wrap.append(review);
+      }
+      root.append(wrap);
     }
   }
   function savePrediction(){
